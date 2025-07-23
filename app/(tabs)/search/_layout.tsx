@@ -12,7 +12,7 @@ export default function SearchLayout() {
           <View style={styles.stackBar}>
             <View style={styles.searchBar}>
               <Ionicons name="search" size={28} color={Colors.light.icon} />
-              <TextInput style={styles.searchInput} />
+              <TextInput style={styles.searchInput} placeholder="Search" />
             </View>
           </View>
         ),

@@ -8,6 +8,7 @@ import {
   useColorScheme,
 } from "react-native";
 import "react-native-reanimated";
+import Toast from "react-native-toast-message";
 
 export default function RootLayout() {
   const scheme = useColorScheme();
@@ -28,17 +29,18 @@ export default function RootLayout() {
         paddingTop: Platform.OS === "android" ? RNStatusBar.currentHeight : 0,
       }}
     >
-      <Stack>
-        <Stack.Screen
-          name="(tabs)"
-          options={{ headerShown: false, title: "Search" }}
-        />
-        <Stack.Screen name="+not-found" />
-      </Stack>
       <StatusBar
         style={scheme == "light" ? "dark" : "light"}
         backgroundColor={scheme == "dark" ? "#000000" : "#ffffff"}
       />
+      <Stack>
+        <Stack.Screen
+          name="(tabs)"
+          options={{ headerShown: false, title: "Back" }}
+        />
+        <Stack.Screen name="+not-found" />
+      </Stack>
+      <Toast />
     </SafeAreaView>
   );
 }

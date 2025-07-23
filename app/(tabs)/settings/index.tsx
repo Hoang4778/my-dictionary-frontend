@@ -1,22 +1,13 @@
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 export default function Settings() {
   return (
-    <>
-      <Text>This is the Settings screen</Text>
-    </>
+    <View>
+      <Text>About us</Text>
+      <Text>Switch light/dark mode</Text>
+      <Text>Upgrade</Text>
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  headerImage: {
-    color: "#808080",
-    bottom: -90,
-    left: -35,
-    position: "absolute",
-  },
-  titleContainer: {
-    flexDirection: "row",
-    gap: 8,
-  },
-});
+const styles = StyleSheet.create({});
