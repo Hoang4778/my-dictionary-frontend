@@ -33,11 +33,8 @@ export default function Favorites() {
             "Something went wrong with rendering favorite words. Please try again later."
           );
         }
-      } else {
-        setErrorMessage(
-          "Something went wrong with fetching favorite words. Please try again later."
-        );
       }
+
       setLoadingState(false);
     } catch (error: any) {
       setErrorMessage(error.message);

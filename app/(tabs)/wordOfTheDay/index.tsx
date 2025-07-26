@@ -194,7 +194,7 @@ export default function WordOfTheDayScreen() {
   if (errorMessage != "") {
     return (
       <View style={styles.errorWrapper}>
-        <Text>{errorMessage}</Text>
+        <Text style={{ textAlign: "center" }}>{errorMessage}</Text>
       </View>
     );
   }
@@ -243,11 +243,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    padding: 16,
   },
   errorWrapper: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    padding: 16,
   },
   wrapper: {
     flexGrow: 1,

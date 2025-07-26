@@ -1,21 +1,12 @@
-import { Colors } from "@/constants/Colors";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { Stack } from "expo-router";
 import React from "react";
-import { StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet } from "react-native";
 
 export default function SearchLayout() {
   return (
     <Stack
       screenOptions={{
-        header: () => (
-          <View style={styles.stackBar}>
-            <View style={styles.searchBar}>
-              <Ionicons name="search" size={28} color={Colors.light.icon} />
-              <TextInput style={styles.searchInput} placeholder="Search" />
-            </View>
-          </View>
-        ),
+        headerShown: false,
       }}
     >
       <Stack.Screen name="index" />
@@ -23,23 +14,4 @@ export default function SearchLayout() {
   );
 }
 
-const styles = StyleSheet.create({
-  stackBar: {
-    height: "auto",
-    backgroundColor: Colors.light.tint,
-    padding: 16,
-  },
-  searchBar: {
-    backgroundColor: "white",
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 8,
-  },
-  searchInput: {
-    padding: 8,
-    fontSize: 18,
-    width: "100%",
-    height: "100%",
-  },
-});
+const styles = StyleSheet.create({});

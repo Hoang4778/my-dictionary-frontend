@@ -1,12 +1,16 @@
+import Definition from "@/components/Definition";
+import Examples from "@/components/Examples";
+import Phonetic from "@/components/Phonetic";
+import Pronunciation from "@/components/Pronunciation";
 import { Colors } from "@/constants/Colors";
 import { Stack, useLocalSearchParams } from "expo-router";
-import { Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function WordDetail() {
   const { word }: { word: string } = useLocalSearchParams();
 
   return (
-    <View>
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <Stack.Screen
         name="[word]"
         options={{
@@ -17,7 +21,15 @@ export default function WordDetail() {
           headerTintColor: "white",
         }}
       />
-      <Text>This is the "{word}" detail screen</Text>
-    </View>
+      <View>
+        <Text>{word}</Text>
+        <Phonetic word={word} />
+        <Pronunciation word={word} />
+        <Definition word={word} />
+        <Examples word={word} />
+      </View>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({});

@@ -1,12 +1,45 @@
+import { Colors } from "@/constants/Colors";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Link } from "expo-router";
-import { FlatList, StyleSheet, Text } from "react-native";
+import { useMemo, useState } from "react";
+import {
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import wordList from "../../../assets/words/word-list.json";
 
 export default function SearchScreen() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const tabBarHeight = useBottomTabBarHeight();
+
+  const filteredWords = useMemo(() => {
+    return wordList.filter((word) =>
+      word.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm, wordList]);
+
   return (
-    <>
+    <SafeAreaView style={styles.screenWrapper}>
+      <View style={styles.stackBar}>
+        <View style={styles.searchBar}>
+          <Ionicons name="search" size={28} color={Colors.light.icon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search"
+            value={searchTerm}
+            onChangeText={(text) => setSearchTerm(text)}
+          />
+        </View>
+      </View>
       <FlatList
-        data={wordList}
+        style={styles.wordListWrapper}
+        contentContainerStyle={{ paddingBottom: tabBarHeight }}
+        data={filteredWords}
         renderItem={({ item }) => (
           <Link
             style={styles.wordItemWrapper}
@@ -16,11 +49,17 @@ export default function SearchScreen() {
           </Link>
         )}
       />
-    </>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  screenWrapper: {
+    flex: 1,
+  },
+  wordListWrapper: {
+    flex: 1,
+  },
   wordItemWrapper: {
     padding: 16,
     borderBottomWidth: 1,
@@ -28,5 +67,23 @@ const styles = StyleSheet.create({
   },
   wordItem: {
     fontSize: 18,
+  },
+  stackBar: {
+    height: "auto",
+    backgroundColor: Colors.light.tint,
+    padding: 16,
+  },
+  searchBar: {
+    backgroundColor: "white",
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 8,
+  },
+  searchInput: {
+    padding: 8,
+    fontSize: 18,
+    width: "100%",
+    height: "100%",
   },
 });
