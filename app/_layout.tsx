@@ -1,3 +1,5 @@
+import { ThemeProvider } from "@/components/ThemeContext";
+import { Colors } from "@/constants/Colors";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -22,25 +24,38 @@ export default function RootLayout() {
   }
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: scheme == "dark" ? "#000000" : "#ffffff",
-        paddingTop: Platform.OS === "android" ? RNStatusBar.currentHeight : 0,
-      }}
-    >
-      <StatusBar
-        style={scheme == "light" ? "dark" : "light"}
-        backgroundColor={scheme == "dark" ? "#000000" : "#ffffff"}
-      />
-      <Stack>
-        <Stack.Screen
-          name="(tabs)"
-          options={{ headerShown: false, title: "Back" }}
+    <ThemeProvider>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: scheme == "dark" ? "#000000" : "#ffffff",
+          paddingTop: Platform.OS === "android" ? RNStatusBar.currentHeight : 0,
+        }}
+      >
+        <StatusBar
+          style={scheme == "light" ? "dark" : "light"}
+          backgroundColor={scheme == "dark" ? "#000000" : "#ffffff"}
         />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <Toast />
-    </SafeAreaView>
+        <Stack>
+          <Stack.Screen
+            name="(tabs)"
+            options={{ headerShown: false, title: "Back" }}
+          />
+          <Stack.Screen
+            name="aboutUs"
+            options={{
+              title: "About Us",
+              headerTitle: "About Us",
+              headerStyle: {
+                backgroundColor: Colors.light.tint,
+              },
+              headerTintColor: "white",
+            }}
+          />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <Toast />
+      </SafeAreaView>
+    </ThemeProvider>
   );
 }
