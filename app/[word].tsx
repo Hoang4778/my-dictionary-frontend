@@ -23,6 +23,7 @@ export default function WordDetail() {
       />
       <View>
         <Text>{word}</Text>
+        <Text>Mark favorite word</Text>
         <Phonetic word={word} />
         <Pronunciation word={word} />
         <Definition word={word} />
