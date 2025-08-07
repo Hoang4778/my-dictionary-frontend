@@ -68,6 +68,9 @@ export default function LoginScreen() {
 
     try {
       const response = await fetch(`${apiURL}/api/login`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
         method: "POST",
         body: JSON.stringify({
           email: emailValue,
@@ -78,7 +81,10 @@ export default function LoginScreen() {
 
       if (result) {
         if (result.code == 200) {
-          await SecureStore.setItemAsync("accountId", result.userId ?? 0);
+          await SecureStore.setItemAsync(
+            "accountId",
+            (result.data?.userId ?? 0).toString()
+          );
           setLoginError(result.message);
 
           setTimeout(() => {

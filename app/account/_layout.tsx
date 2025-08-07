@@ -3,7 +3,7 @@ import { Stack } from "expo-router";
 import React from "react";
 import { Text, View } from "react-native";
 
-export default function SettingsLayout() {
+export default function AccountLayout() {
   return (
     <Stack
       screenOptions={{
@@ -17,13 +17,13 @@ export default function SettingsLayout() {
             }}
           >
             <Text style={{ color: "white", fontWeight: "bold", fontSize: 18 }}>
-              Settings
+              Account
             </Text>
           </View>
         ),
       }}
     >
-      <Stack.Screen name="index" />
+      <Stack.Screen name="[accountId]" />
     </Stack>
   );
 }

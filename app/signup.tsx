@@ -98,6 +98,9 @@ export default function SignupScreen() {
 
     try {
       const response = await fetch(`${apiURL}/api/signup`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
         method: "POST",
         body: JSON.stringify({
           userName: accountNameValue,
@@ -109,7 +112,10 @@ export default function SignupScreen() {
 
       if (result) {
         if (result.code == 200) {
-          await SecureStore.setItemAsync("accountId", result.userId ?? 0);
+          await SecureStore.setItemAsync(
+            "accountId",
+            (result.data?.userId ?? 0).toString()
+          );
           setLoginError(result.message);
 
           setTimeout(() => {
@@ -184,7 +190,7 @@ export default function SignupScreen() {
           </View>
           <View>
             <TouchableOpacity onPress={signup} disabled={isSubmitting}>
-              <Text>Log in</Text>
+              <Text>Sign up</Text>
             </TouchableOpacity>
             <Text>{loginError}</Text>
           </View>

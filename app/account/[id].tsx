@@ -12,7 +12,7 @@ import {
 } from "react-native";
 
 export default function AccountScreen() {
-  const { account }: { account: string } = useLocalSearchParams();
+  const { id }: { id: string } = useLocalSearchParams();
   const [loadingState, setLoadingState] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [accountInfo, setAccountInfo] = useState({}) as any;
@@ -20,6 +20,20 @@ export default function AccountScreen() {
 
   async function fetchAccountInfo() {
     setLoadingState(true);
+
+    const accountId = parseInt(id);
+
+    if (accountId == undefined) {
+      setErrorMessage(
+        "Account ID number is not found. Please try again later."
+      );
+      setLoadingState(false);
+      return;
+    } else if (accountId == 0) {
+      setErrorMessage("Wrong account ID number. Please try again later.");
+      setLoadingState(false);
+      return;
+    }
 
     const apiURL = process.env.EXPO_PUBLIC_SERVER_API_URL;
     if (apiURL == undefined) {
@@ -31,7 +45,7 @@ export default function AccountScreen() {
 
     try {
       const endpoint = new URL(`${apiURL}/api/account/get`);
-      endpoint.searchParams.append("accountId", account);
+      endpoint.searchParams.append("accountId", id);
 
       const response = await fetch(endpoint);
       const result = await response.json();
@@ -84,8 +98,8 @@ export default function AccountScreen() {
 
   return (
     <View>
-      <Text>Account name: {accountInfo.name}</Text>
-      <Text>Account email: {accountInfo.email}</Text>
+      <Text>Account name: {accountInfo.data?.name}</Text>
+      <Text>Account email: {accountInfo.data?.email}</Text>
       <TouchableOpacity onPress={logout}>
         <Text>Log out</Text>
       </TouchableOpacity>

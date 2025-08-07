@@ -48,7 +48,12 @@ export default function Settings() {
         <Button title="Toggle" onPress={toggleTheme} />
       </View>
       {isLoggedIn ? (
-        <Link href={{ pathname: "/[account]", params: { account: accountId } }}>
+        <Link
+          href={{
+            pathname: "/account/[id]",
+            params: { id: accountId },
+          }}
+        >
           <Text>Account</Text>
         </Link>
       ) : (

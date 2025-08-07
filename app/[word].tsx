@@ -1,5 +1,6 @@
 import Definition from "@/components/Definition";
 import Examples from "@/components/Examples";
+import MarkFavorites from "@/components/MarkFavorites";
 import Phonetic from "@/components/Phonetic";
 import Pronunciation from "@/components/Pronunciation";
 import { Colors } from "@/constants/Colors";
@@ -22,6 +23,7 @@ export default function WordDetail() {
         }}
       />
       <View>
+        <MarkFavorites wordToMark={word} />
         <Text>{word}</Text>
         <Text>Mark favorite word</Text>
         <Phonetic word={word} />
