@@ -1,13 +1,14 @@
 import { Colors } from "@/constants/Colors";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
+import { useTheme } from "./ThemeContext";
 
 export default function Phonetic({ word }: { word: string }) {
-  const [phonetic, setPhonetic] = useState({}) as any;
-  const [loadingState, setLoadingState] = useState(false);
+  const [phonetic, setPhonetic] = useState("");
+  const [loadingState, setLoadingState] = useState(true);
+  const { theme } = useTheme();
 
   async function fetchPhonetic() {
-    setLoadingState(true);
     try {
       const apiURL = process.env.EXPO_PUBLIC_WORDNIK_API_URL;
       const apiKey = process.env.EXPO_PUBLIC_WORDNIK_API_KEY;
@@ -19,13 +20,14 @@ export default function Phonetic({ word }: { word: string }) {
         const result = await response.json();
 
         if (Array.isArray(result) && result.length > 0) {
-          setPhonetic(result[0]);
+          setPhonetic(result[0]?.raw);
         }
       }
     } catch (error: any) {
       console.log(error.message);
+    } finally {
+      setLoadingState(false);
     }
-    setLoadingState(false);
   }
 
   useEffect(() => {
@@ -34,23 +36,19 @@ export default function Phonetic({ word }: { word: string }) {
 
   if (loadingState == true) {
     return (
-      <View style={styles.loadingIconWrapper}>
+      <View>
         <ActivityIndicator size="small" color={Colors.light.tint} />
       </View>
     );
   }
 
+  if (phonetic == "") {
+    return null;
+  }
+
   return (
     <View>
-      {Object.keys(phonetic).length > 0 && phonetic.raw ? (
-        <Text>/{phonetic.raw?.replaceAll("/", "")}/</Text>
-      ) : (
-        <Text></Text>
-      )}
+      <Text style={{ color: Colors[theme].text }}>/{phonetic.replaceAll("/", "")}/</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  loadingIconWrapper: {},
-});

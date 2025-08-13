@@ -5,7 +5,13 @@ import { useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 
-export default function MarkFavorites({ wordToMark }: { wordToMark: string }) {
+export default function MarkFavorites({
+  wordToMark,
+  styling = {},
+}: {
+  wordToMark: string;
+  styling?: object;
+}) {
   const [isFavorite, setIsFavorite] = useState(false);
 
   async function checkFavoriteWord() {
@@ -32,9 +38,7 @@ export default function MarkFavorites({ wordToMark }: { wordToMark: string }) {
         const favoriteWords = JSON.parse(favoriteWordsStr);
 
         if (Array.isArray(favoriteWords)) {
-          const filteredFavoriteWords = favoriteWords.filter(
-            (word) => word != wordToMark
-          );
+          const filteredFavoriteWords = favoriteWords.filter((word) => word != wordToMark);
           filteredFavoriteWords.unshift(wordToMark);
           const newFavoriteWordsStr = JSON.stringify(filteredFavoriteWords);
           await SecureStore.setItemAsync("favoriteWords", newFavoriteWordsStr);
@@ -80,15 +84,11 @@ export default function MarkFavorites({ wordToMark }: { wordToMark: string }) {
           if (favoriteWordIdx > -1) {
             favoriteWords.splice(favoriteWordIdx, 1);
             const newFavoriteWordsStr = JSON.stringify(favoriteWords);
-            await SecureStore.setItemAsync(
-              "favoriteWords",
-              newFavoriteWordsStr
-            );
+            await SecureStore.setItemAsync("favoriteWords", newFavoriteWordsStr);
           } else {
             Toast.show({
               type: "error",
-              text1:
-                "Failed to save your favorite word. Please try again later",
+              text1: "Failed to save your favorite word. Please try again later",
               position: "top",
             });
           }
@@ -124,18 +124,14 @@ export default function MarkFavorites({ wordToMark }: { wordToMark: string }) {
   }, []);
 
   return (
-    <View>
+    <View style={styling}>
       {isFavorite ? (
         <TouchableOpacity onPress={unmarkFavoriteWord}>
           <Ionicons name="bookmark" size={30} color={Colors.light.tint} />
         </TouchableOpacity>
       ) : (
         <TouchableOpacity onPress={markFavoriteWord}>
-          <Ionicons
-            name="bookmark-outline"
-            size={30}
-            color={Colors.light.tint}
-          />
+          <Ionicons name="bookmark-outline" size={30} color={Colors.light.tint} />
         </TouchableOpacity>
       )}
     </View>

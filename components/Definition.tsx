@@ -1,21 +1,20 @@
 import { Colors } from "@/constants/Colors";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { useTheme } from "./ThemeContext";
 
-export default function Definition({ word }: { word: string }) {
+export default function Definition({ word, styling = {} }: { word: string; styling: object }) {
   const [definitions, setDefinitions] = useState([]) as any;
-  const [loadingState, setLoadingState] = useState(false);
+  const [loadingState, setLoadingState] = useState(true);
+  const { theme } = useTheme();
 
   async function fetchDefinition() {
-    setLoadingState(true);
     try {
       const apiURL = process.env.EXPO_PUBLIC_WORDNIK_API_URL;
       const apiKey = process.env.EXPO_PUBLIC_WORDNIK_API_KEY;
 
       if (apiURL && apiKey) {
-        const response = await fetch(
-          `${apiURL}/word.json/${word}/definitions?api_key=${apiKey}`
-        );
+        const response = await fetch(`${apiURL}/word.json/${word}/definitions?api_key=${apiKey}`);
         const result = await response.json();
 
         if (Array.isArray(result) && result.length > 0) {
@@ -24,8 +23,9 @@ export default function Definition({ word }: { word: string }) {
       }
     } catch (error: any) {
       console.log(error.message);
+    } finally {
+      setLoadingState(false);
     }
-    setLoadingState(false);
   }
 
   useEffect(() => {
@@ -34,37 +34,47 @@ export default function Definition({ word }: { word: string }) {
 
   if (loadingState == true) {
     return (
-      <View style={styles.loadingIconWrapper}>
+      <View>
         <ActivityIndicator size="small" color={Colors.light.tint} />
       </View>
     );
   }
 
   return (
-    <View>
-      <Text>Definitions:</Text>
-      <View>
-        {definitions.length > 0 ? (
-          definitions.map((def: any, idx: number) => (
-            <View key={idx}>
-              {def.text && def.partOfSpeech ? (
-                <Text>
-                  - {def.partOfSpeech}:{" "}
-                  {def.text?.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "")}
+    <View style={styling}>
+      <Text style={[styles.label, { color: Colors[theme].text }]}>Definitions:</Text>
+      <View style={styles.itemWrapper}>
+        {definitions.map((def: any, idx: number) => {
+          if (def.partOfSpeech && def.text) {
+            return (
+              <View key={idx} style={styles.entryGroup}>
+                <Text style={[styles.partOfSpeech, { color: Colors.light.tint }]}>
+                  {def.partOfSpeech}
                 </Text>
-              ) : (
-                <Text></Text>
-              )}
-            </View>
-          ))
-        ) : (
-          <Text></Text>
-        )}
+                <Text style={{ color: Colors[theme].text }}>
+                  {def.text?.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "").trim()}
+                </Text>
+              </View>
+            );
+          }
+        })}
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  loadingIconWrapper: {},
+  label: {
+    fontSize: 18,
+    fontWeight: 500,
+  },
+  itemWrapper: {
+    gap: 16,
+  },
+  entryGroup: {
+    gap: 4,
+  },
+  partOfSpeech: {
+    fontSize: 24,
+  },
 });

@@ -1,32 +1,24 @@
+import { useTheme } from "@/components/ThemeContext";
 import { Colors } from "@/constants/Colors";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AccountScreen() {
   const { id }: { id: string } = useLocalSearchParams();
-  const [loadingState, setLoadingState] = useState(false);
+  const [loadingState, setLoadingState] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [accountInfo, setAccountInfo] = useState({}) as any;
   const router = useRouter();
+  const { theme } = useTheme();
 
   async function fetchAccountInfo() {
-    setLoadingState(true);
-
     const accountId = parseInt(id);
 
     if (accountId == undefined) {
-      setErrorMessage(
-        "Account ID number is not found. Please try again later."
-      );
+      setErrorMessage("Account ID number is not found. Please try again later.");
       setLoadingState(false);
       return;
     } else if (accountId == 0) {
@@ -82,7 +74,7 @@ export default function AccountScreen() {
 
   if (loadingState == true) {
     return (
-      <View style={styles.loadingIconWrapper}>
+      <View style={[styles.loadingIconWrapper, { backgroundColor: Colors[theme].background }]}>
         <ActivityIndicator size="large" color={Colors.light.tint} />
       </View>
     );
@@ -90,20 +82,34 @@ export default function AccountScreen() {
 
   if (errorMessage != "") {
     return (
-      <View style={styles.errorWrapper}>
-        <Text style={{ textAlign: "center" }}>{errorMessage}</Text>
+      <View style={[styles.errorWrapper, { backgroundColor: Colors[theme].background }]}>
+        <Text style={{ textAlign: "center", color: Colors[theme].text }}>{errorMessage}</Text>
       </View>
     );
   }
 
   return (
-    <View>
-      <Text>Account name: {accountInfo.data?.name}</Text>
-      <Text>Account email: {accountInfo.data?.email}</Text>
-      <TouchableOpacity onPress={logout}>
-        <Text>Log out</Text>
+    <SafeAreaView
+      style={[styles.screenWrapper, { backgroundColor: Colors[theme].background }]}
+      edges={["bottom"]}
+    >
+      <View>
+        <View style={styles.infoItem}>
+          <Text style={[styles.textItem, { color: Colors[theme].text }]}>Account name:</Text>
+          <Text style={{ color: Colors[theme].text }}>{accountInfo.data?.name}</Text>
+        </View>
+        <View style={styles.infoItem}>
+          <Text style={[styles.textItem, { color: Colors[theme].text }]}>Account email:</Text>
+          <Text style={{ color: Colors[theme].text }}>{accountInfo.data?.email}</Text>
+        </View>
+      </View>
+      <TouchableOpacity
+        onPress={logout}
+        style={[styles.btnLogout, { borderColor: Colors.light.tint }]}
+      >
+        <Text style={[styles.btnLogoutText, { color: Colors.light.tint }]}>Log out</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -119,5 +125,32 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
+  },
+  screenWrapper: {
+    flex: 1,
+    padding: 16,
+    justifyContent: "space-between",
+  },
+  infoItem: {
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#cdcdcdff",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  btnLogout: {
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    width: "100%",
+  },
+  btnLogoutText: {
+    textAlign: "center",
+    fontWeight: 500,
+    fontSize: 18,
+  },
+  textItem: {
+    fontSize: 18,
   },
 });

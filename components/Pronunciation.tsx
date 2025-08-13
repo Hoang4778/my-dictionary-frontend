@@ -1,10 +1,13 @@
 import { Colors } from "@/constants/Colors";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { useAudioPlayer } from "expo-audio";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 
 export default function Pronunciation({ word }: { word: string }) {
-  const [pronunciation, setPronunciation] = useState({}) as any;
   const [loadingState, setLoadingState] = useState(false);
+  const [audioSource, setAudioSource] = useState("");
+  const player = useAudioPlayer(audioSource);
 
   async function fetchPronunciation() {
     setLoadingState(true);
@@ -13,13 +16,11 @@ export default function Pronunciation({ word }: { word: string }) {
       const apiKey = process.env.EXPO_PUBLIC_WORDNIK_API_KEY;
 
       if (apiURL && apiKey) {
-        const response = await fetch(
-          `${apiURL}/word.json/${word}/audio?api_key=${apiKey}`
-        );
+        const response = await fetch(`${apiURL}/word.json/${word}/audio?api_key=${apiKey}`);
         const result = await response.json();
 
         if (Array.isArray(result) && result.length > 0) {
-          setPronunciation(result[0]);
+          setAudioSource(result[0].fileUrl);
         }
       }
     } catch (error: any) {
@@ -34,7 +35,7 @@ export default function Pronunciation({ word }: { word: string }) {
 
   if (loadingState == true) {
     return (
-      <View style={styles.loadingIconWrapper}>
+      <View>
         <ActivityIndicator size="small" color={Colors.light.tint} />
       </View>
     );
@@ -42,15 +43,19 @@ export default function Pronunciation({ word }: { word: string }) {
 
   return (
     <View>
-      {Object.keys(pronunciation).length > 0 && pronunciation.fileUrl ? (
-        <Text>Pronunciation: {pronunciation.fileUrl}</Text>
+      {audioSource != "" ? (
+        <Ionicons
+          name="volume-high"
+          size={20}
+          color={Colors.light.tint}
+          onPress={() => {
+            player.seekTo(0);
+            player.play();
+          }}
+        />
       ) : (
-        <Text></Text>
+        <Ionicons name="volume-mute" size={20} color={Colors.light.tint} />
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  loadingIconWrapper: {},
-});

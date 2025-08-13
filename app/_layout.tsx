@@ -3,12 +3,7 @@ import { Colors } from "@/constants/Colors";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import {
-  Platform,
-  StatusBar as RNStatusBar,
-  SafeAreaView,
-  useColorScheme,
-} from "react-native";
+import { Platform, StatusBar as RNStatusBar, SafeAreaView, useColorScheme } from "react-native";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 
@@ -37,10 +32,7 @@ export default function RootLayout() {
           backgroundColor={scheme == "dark" ? "#000000" : "#ffffff"}
         />
         <Stack>
-          <Stack.Screen
-            name="(tabs)"
-            options={{ headerShown: false, title: "Back" }}
-          />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false, title: "Back" }} />
           <Stack.Screen
             name="aboutUs"
             options={{
@@ -52,7 +44,50 @@ export default function RootLayout() {
               headerTintColor: "white",
             }}
           />
-          <Stack.Screen name="+not-found" />
+          <Stack.Screen
+            name="account"
+            options={{
+              title: "Profile",
+              headerTitle: "Profile",
+              headerStyle: {
+                backgroundColor: Colors.light.tint,
+              },
+              headerTintColor: "white",
+            }}
+          />
+          <Stack.Screen
+            name="login"
+            options={{
+              title: "Login",
+              headerTitle: "Login",
+              headerStyle: {
+                backgroundColor: Colors.light.tint,
+              },
+              headerTintColor: "white",
+            }}
+          />
+          <Stack.Screen
+            name="signup"
+            options={{
+              title: "Signup",
+              headerTitle: "Signup",
+              headerStyle: {
+                backgroundColor: Colors.light.tint,
+              },
+              headerTintColor: "white",
+            }}
+          />
+          <Stack.Screen
+            name="+not-found"
+            options={{
+              title: "Not found",
+              headerTitle: "Not found",
+              headerStyle: {
+                backgroundColor: Colors.light.tint,
+              },
+              headerTintColor: "white",
+            }}
+          />
         </Stack>
         <Toast />
       </SafeAreaView>
