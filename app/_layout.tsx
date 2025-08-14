@@ -1,4 +1,4 @@
-import { ThemeProvider } from "@/components/ThemeContext";
+import { ThemeProvider, useTheme } from "@/components/ThemeContext";
 import { Colors } from "@/constants/Colors";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -8,6 +8,7 @@ import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 
 export default function RootLayout() {
+  const { theme } = useTheme();
   const scheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
@@ -23,7 +24,7 @@ export default function RootLayout() {
       <SafeAreaView
         style={{
           flex: 1,
-          backgroundColor: scheme == "dark" ? "#000000" : "#ffffff",
+          backgroundColor: Colors[theme].background,
           paddingTop: Platform.OS === "android" ? RNStatusBar.currentHeight : 0,
         }}
       >

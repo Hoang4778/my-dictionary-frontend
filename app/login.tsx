@@ -20,6 +20,7 @@ export default function LoginScreen() {
   async function login() {
     setEmailError("");
     setPasswordError("");
+    setLoginError("");
     setIsSubmitting(true);
 
     const emailValue = email.trim();
@@ -82,9 +83,11 @@ export default function LoginScreen() {
         if (result.code == 200) {
           await SecureStore.setItemAsync("accountId", (result.data?.userId ?? 0).toString());
           setLoginError(result.message);
+          setEmail("");
+          setPassword("");
 
           setTimeout(() => {
-            router.navigate("/(tabs)/settings");
+            router.replace("/(tabs)/settings");
           }, 2000);
         } else {
           setLoginError(result.message);
@@ -95,8 +98,6 @@ export default function LoginScreen() {
     } catch (error: any) {
       setLoginError(error.message);
     } finally {
-      setEmail("");
-      setPassword("");
       setIsSubmitting(false);
     }
   }

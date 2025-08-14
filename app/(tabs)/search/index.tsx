@@ -2,14 +2,18 @@ import { useTheme } from "@/components/ThemeContext";
 import { Colors } from "@/constants/Colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useFocusEffect } from "@react-navigation/native";
 import { Link } from "expo-router";
-import { useMemo, useState } from "react";
+import * as SecureStore from "expo-secure-store";
+import { useCallback, useMemo, useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
 import wordList from "../../../assets/words/word-list.json";
 
 export default function SearchScreen() {
   const [searchTerm, setSearchTerm] = useState("");
   const [clearSearch, setClearSearch] = useState(false);
+  const [recentWordList, setRecentWordList] = useState<any[]>([]);
+  const [showRecentWords, setShowRecentWords] = useState(true);
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
 
@@ -24,19 +28,42 @@ export default function SearchScreen() {
   }
 
   function handleSearchInput(searchText: string) {
-    if (searchText != "") {
+    const searchStr = searchText.trim();
+
+    if (searchStr != "") {
+      setShowRecentWords(false);
+      setSearchTerm(searchStr);
       setClearSearch(true);
-      setSearchTerm(searchText);
     } else {
+      setShowRecentWords(true);
+      setSearchTerm("");
       setClearSearch(false);
-      setSearchTerm(searchText);
     }
   }
 
   function handleClearSearch() {
+    setShowRecentWords(true);
     setSearchTerm("");
     setClearSearch(false);
   }
+
+  async function getRecentWords() {
+    const recentWordStr = await SecureStore.getItemAsync("recentWords");
+
+    if (recentWordStr != null) {
+      const recentWords = JSON.parse(recentWordStr);
+
+      if (Array.isArray(recentWords)) {
+        setRecentWordList(recentWords);
+      }
+    }
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      getRecentWords();
+    }, [])
+  );
 
   return (
     <SafeAreaView style={[styles.screenWrapper, { backgroundColor: Colors[theme].background }]}>
@@ -59,19 +86,35 @@ export default function SearchScreen() {
           />
         </View>
       </View>
-      <FlatList
-        style={styles.wordListWrapper}
-        contentContainerStyle={{ paddingBottom: tabBarHeight }}
-        data={filteredWords}
-        renderItem={({ item }) => (
-          <Link
-            style={styles.wordItemWrapper}
-            href={{ pathname: "/[word]", params: { word: item } }}
-          >
-            <Text style={[styles.wordItem, { color: Colors[theme].text }]}>{item}</Text>
-          </Link>
-        )}
-      />
+      {showRecentWords ? (
+        <FlatList
+          style={styles.wordListWrapper}
+          contentContainerStyle={{ paddingBottom: tabBarHeight }}
+          data={recentWordList}
+          renderItem={({ item }) => (
+            <Link
+              style={styles.wordItemWrapper}
+              href={{ pathname: "/[word]", params: { word: item } }}
+            >
+              <Text style={[styles.wordItem, { color: Colors[theme].text }]}>{item}</Text>
+            </Link>
+          )}
+        />
+      ) : (
+        <FlatList
+          style={styles.wordListWrapper}
+          contentContainerStyle={{ paddingBottom: tabBarHeight }}
+          data={filteredWords}
+          renderItem={({ item }) => (
+            <Link
+              style={styles.wordItemWrapper}
+              href={{ pathname: "/[word]", params: { word: item } }}
+            >
+              <Text style={[styles.wordItem, { color: Colors[theme].text }]}>{item}</Text>
+            </Link>
+          )}
+        />
+      )}
     </SafeAreaView>
   );
 }

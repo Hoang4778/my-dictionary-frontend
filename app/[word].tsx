@@ -6,12 +6,38 @@ import Pronunciation from "@/components/Pronunciation";
 import { useTheme } from "@/components/ThemeContext";
 import { Colors } from "@/constants/Colors";
 import { Stack, useLocalSearchParams } from "expo-router";
+import * as SecureStore from "expo-secure-store";
+import { useEffect } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function WordDetail() {
   const { word }: { word: string } = useLocalSearchParams();
   const { theme } = useTheme();
+
+  async function saveWordEntry() {
+    const recentWordStr = await SecureStore.getItemAsync("recentWords");
+
+    if (recentWordStr != null) {
+      const recentWords = JSON.parse(recentWordStr);
+
+      if (Array.isArray(recentWords)) {
+        const filteredRecentWords = recentWords.filter((recentWord) => recentWord != word);
+        filteredRecentWords.unshift(word);
+        await SecureStore.setItemAsync("recentWords", JSON.stringify(filteredRecentWords));
+      } else {
+        const newRecentWords = [word];
+        await SecureStore.setItemAsync("recentWords", JSON.stringify(newRecentWords));
+      }
+    } else {
+      const newRecentWords = [word];
+      await SecureStore.setItemAsync("recentWords", JSON.stringify(newRecentWords));
+    }
+  }
+
+  useEffect(() => {
+    saveWordEntry();
+  }, []);
 
   return (
     <SafeAreaView style={styles.screenLayer} edges={["bottom"]}>

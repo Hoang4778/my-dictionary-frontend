@@ -9,13 +9,11 @@ import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-nativ
 
 export default function Favorites() {
   const [favoriteWords, setFavoriteWords] = useState([] as string[]);
-  const [loadingState, setLoadingState] = useState(false);
+  const [loadingState, setLoadingState] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const { theme } = useTheme();
 
   async function fetchFavoriteWords() {
-    setLoadingState(true);
-
     try {
       const favoriteWordsStr = await SecureStore.getItemAsync("favoriteWords");
 
@@ -30,10 +28,10 @@ export default function Favorites() {
           );
         }
       }
-
-      setLoadingState(false);
     } catch (error: any) {
       setErrorMessage(error.message);
+    } finally {
+      setLoadingState(false);
     }
   }
 

@@ -53,7 +53,7 @@ export default function AccountScreen() {
   async function handleLogout() {
     await SecureStore.deleteItemAsync("accountId");
 
-    router.navigate("/(tabs)/settings");
+    router.replace("/(tabs)/settings");
   }
 
   function logout() {

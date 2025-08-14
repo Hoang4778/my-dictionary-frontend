@@ -111,9 +111,13 @@ export default function SignupScreen() {
         if (result.code == 200) {
           await SecureStore.setItemAsync("accountId", (result.data?.userId ?? 0).toString());
           setLoginError(result.message);
+          setAccountName("");
+          setEmail("");
+          setPassword("");
+          setConfirmPassword("");
 
           setTimeout(() => {
-            router.navigate("/(tabs)/settings");
+            router.replace("/(tabs)/settings");
           }, 2000);
         } else {
           setLoginError(result.message);
@@ -124,10 +128,6 @@ export default function SignupScreen() {
     } catch (error: any) {
       setLoginError(error.message);
     } finally {
-      setAccountName("");
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
       setIsSubmitting(false);
     }
   }

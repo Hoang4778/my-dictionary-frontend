@@ -1,4 +1,6 @@
 import { Colors } from "@/constants/Colors";
+import { deleteFavoriteWords } from "@/hooks/deleteFavWords";
+import { postFavoriteWords } from "@/hooks/postFavWords";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
@@ -55,10 +57,36 @@ export default function MarkFavorites({
         await SecureStore.setItemAsync("favoriteWords", newFavoriteWordsStr);
       }
 
+      const accountId = await SecureStore.getItemAsync("accountId");
+
+      if (accountId != null) {
+        const idNum = parseInt(accountId);
+        const apiURL = process.env.EXPO_PUBLIC_SERVER_API_URL;
+
+        if (apiURL != undefined) {
+          const addMessage = await postFavoriteWords(apiURL, idNum, [wordToMark]);
+
+          if (addMessage == "okay") {
+          } else {
+            Toast.show({
+              type: "error",
+              text1: addMessage,
+              position: "top",
+            });
+          }
+        } else {
+          Toast.show({
+            type: "error",
+            text1: "Something went wrong with the API server endpoint.",
+            position: "top",
+          });
+        }
+      }
+
       setIsFavorite(true);
       Toast.show({
         type: "success",
-        text1: "Word marked as favorite successfully.",
+        text1: "Favorite word marked successfully.",
         position: "top",
       });
     } catch (error: any) {
@@ -101,6 +129,32 @@ export default function MarkFavorites({
         const newFavoriteWords = [] as string[];
         const newFavoriteWordsStr = JSON.stringify(newFavoriteWords);
         await SecureStore.setItemAsync("favoriteWords", newFavoriteWordsStr);
+      }
+
+      const accountId = await SecureStore.getItemAsync("accountId");
+
+      if (accountId != null) {
+        const idNum = parseInt(accountId);
+        const apiURL = process.env.EXPO_PUBLIC_SERVER_API_URL;
+
+        if (apiURL != undefined) {
+          const addMessage = await deleteFavoriteWords(apiURL, idNum, [wordToMark]);
+
+          if (addMessage == "okay") {
+          } else {
+            Toast.show({
+              type: "error",
+              text1: addMessage,
+              position: "top",
+            });
+          }
+        } else {
+          Toast.show({
+            type: "error",
+            text1: "Something went wrong with the API server endpoint.",
+            position: "top",
+          });
+        }
       }
 
       setIsFavorite(false);
