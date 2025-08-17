@@ -4,7 +4,7 @@ import { postFavoriteWords } from "@/hooks/postFavWords";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { DeviceEventEmitter, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 
 export default function MarkFavorites({
@@ -27,6 +27,8 @@ export default function MarkFavorites({
 
         if (isThisWordFavorite == true) {
           setIsFavorite(true);
+        } else {
+          setIsFavorite(false);
         }
       }
     }
@@ -138,13 +140,13 @@ export default function MarkFavorites({
         const apiURL = process.env.EXPO_PUBLIC_SERVER_API_URL;
 
         if (apiURL != undefined) {
-          const addMessage = await deleteFavoriteWords(apiURL, idNum, [wordToMark]);
+          const deleteMessage = await deleteFavoriteWords(apiURL, idNum, [wordToMark]);
 
-          if (addMessage == "okay") {
+          if (deleteMessage == "okay") {
           } else {
             Toast.show({
               type: "error",
-              text1: addMessage,
+              text1: deleteMessage,
               position: "top",
             });
           }
@@ -174,7 +176,11 @@ export default function MarkFavorites({
   }
 
   useEffect(() => {
-    checkFavoriteWord();
+    const listener = DeviceEventEmitter.addListener("favoriteWordsCleared", () => {
+      checkFavoriteWord();
+    });
+
+    return () => listener.remove();
   }, []);
 
   return (

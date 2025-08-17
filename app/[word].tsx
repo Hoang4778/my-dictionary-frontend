@@ -96,5 +96,6 @@ const styles = StyleSheet.create({
   examples: {
     marginTop: 16,
     gap: 8,
+    marginBottom: 16,
   },
 });

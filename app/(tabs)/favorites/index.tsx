@@ -1,11 +1,20 @@
 import { useTheme } from "@/components/ThemeContext";
 import { Colors } from "@/constants/Colors";
+import { deleteFavoriteWords } from "@/hooks/deleteFavWords";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useFocusEffect } from "@react-navigation/native";
 import { Link } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  DeviceEventEmitter,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function Favorites() {
   const [favoriteWords, setFavoriteWords] = useState([] as string[]);
@@ -35,6 +44,40 @@ export default function Favorites() {
     }
   }
 
+  async function clearFavoriteWords() {
+    await SecureStore.setItemAsync("favoriteWords", JSON.stringify([]));
+
+    const accountId = await SecureStore.getItemAsync("accountId");
+
+    if (accountId != null) {
+      const idNum = parseInt(accountId);
+      const apiURL = process.env.EXPO_PUBLIC_SERVER_API_URL;
+
+      if (apiURL != undefined) {
+        const deleteMessage = await deleteFavoriteWords(apiURL, idNum, favoriteWords);
+
+        if (deleteMessage == "okay") {
+        } else {
+          Toast.show({
+            type: "error",
+            text1: deleteMessage,
+            position: "top",
+          });
+        }
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Something went wrong with the API server endpoint.",
+          position: "top",
+        });
+      }
+    }
+
+    DeviceEventEmitter.emit("favoriteWordsCleared");
+
+    setFavoriteWords([]);
+  }
+
   useFocusEffect(
     useCallback(() => {
       fetchFavoriteWords();
@@ -59,6 +102,25 @@ export default function Favorites() {
 
   return (
     <View style={[styles.screenWrapper, { backgroundColor: Colors[theme].background }]}>
+      <View
+        style={{
+          height: 60,
+          backgroundColor: Colors.light.tint,
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 16,
+          position: "relative",
+        }}
+      >
+        <Text style={{ color: "white", fontWeight: "bold", fontSize: 18 }}>Favorites</Text>
+        <Ionicons
+          name="trash-bin"
+          size={25}
+          color="#fff"
+          style={[styles.btnRemoveFavWords, { width: favoriteWords.length > 0 ? "auto" : 0 }]}
+          onPress={clearFavoriteWords}
+        />
+      </View>
       {favoriteWords.length > 0 ? (
         <FlatList
           data={favoriteWords}
@@ -109,12 +171,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   noWordWrapper: {
+    flex: 1,
     gap: 16,
     padding: 16,
+    justifyContent: "center",
   },
   screenWrapper: {
     flex: 1,
-    justifyContent: "center",
   },
   noWordHeadline: {
     textAlign: "center",
@@ -129,5 +192,10 @@ const styles = StyleSheet.create({
   },
   noWordDescText2: {
     textAlign: "center",
+  },
+  btnRemoveFavWords: {
+    position: "absolute",
+    right: 16,
+    top: "60%",
   },
 });

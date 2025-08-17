@@ -7,6 +7,7 @@ import { Link } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useCallback, useMemo, useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
+import Toast from "react-native-toast-message";
 import wordList from "../../../assets/words/word-list.json";
 
 export default function SearchScreen() {
@@ -48,14 +49,35 @@ export default function SearchScreen() {
   }
 
   async function getRecentWords() {
-    const recentWordStr = await SecureStore.getItemAsync("recentWords");
+    try {
+      const recentWordStr = await SecureStore.getItemAsync("recentWords");
 
-    if (recentWordStr != null) {
-      const recentWords = JSON.parse(recentWordStr);
+      if (recentWordStr != null) {
+        const recentWords = JSON.parse(recentWordStr);
 
-      if (Array.isArray(recentWords)) {
-        setRecentWordList(recentWords);
+        if (Array.isArray(recentWords)) {
+          setRecentWordList(recentWords);
+        }
       }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message,
+        position: "top",
+      });
+    }
+  }
+
+  async function clearRecentWords() {
+    try {
+      await SecureStore.setItemAsync("recentWords", JSON.stringify([]));
+      setRecentWordList([]);
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message,
+        position: "top",
+      });
     }
   }
 
@@ -68,7 +90,7 @@ export default function SearchScreen() {
   return (
     <SafeAreaView style={[styles.screenWrapper, { backgroundColor: Colors[theme].background }]}>
       <View style={styles.stackBar}>
-        <View style={styles.searchBar}>
+        <View style={[styles.searchBar, { width: recentWordList.length > 0 ? "92%" : "100%" }]}>
           <Ionicons name="search" size={28} color={Colors.light.icon} />
           <TextInput
             style={styles.searchInput}
@@ -85,6 +107,13 @@ export default function SearchScreen() {
             onPress={handleClearSearch}
           />
         </View>
+        <Ionicons
+          name="trash-bin"
+          size={25}
+          color="#fff"
+          style={{ display: recentWordList.length > 0 ? "flex" : "none" }}
+          onPress={clearRecentWords}
+        />
       </View>
       {showRecentWords ? (
         <FlatList
@@ -138,10 +167,12 @@ const styles = StyleSheet.create({
     height: "auto",
     backgroundColor: Colors.light.tint,
     padding: 16,
+    flexDirection: "row",
+    gap: 8,
+    alignItems: "center",
   },
   searchBar: {
     backgroundColor: "white",
-    width: "100%",
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 8,
