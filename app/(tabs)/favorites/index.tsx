@@ -95,7 +95,7 @@ export default function Favorites() {
   if (errorMessage != "") {
     return (
       <View style={[styles.errorWrapper, { backgroundColor: Colors[theme].background }]}>
-        <Text style={{ color: Colors[theme].text }}>{errorMessage}</Text>
+        <Text style={{ color: Colors[theme].text, textAlign: "center" }}>{errorMessage}</Text>
       </View>
     );
   }
