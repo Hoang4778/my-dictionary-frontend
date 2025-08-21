@@ -59,19 +59,7 @@ export default function SearchScreen() {
 
         if (Array.isArray(recentWords)) {
           dispatch(applyNewList(recentWords));
-        } else {
-          Toast.show({
-            type: "error",
-            text1: "Failed to show the recent searched words.",
-            position: "top",
-          });
         }
-      } else {
-        Toast.show({
-          type: "error",
-          text1: "Failed to fetch the recent searched words.",
-          position: "top",
-        });
       }
     } catch (error: any) {
       Toast.show({
