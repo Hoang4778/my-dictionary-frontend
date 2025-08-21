@@ -2,18 +2,20 @@ import { useTheme } from "@/components/ThemeContext";
 import { Colors } from "@/constants/Colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { useFocusEffect } from "@react-navigation/native";
 import { Link } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import { useCallback, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
 import Toast from "react-native-toast-message";
 import wordList from "../../../assets/words/word-list.json";
+import { useDispatch, useSelector } from "react-redux";
+import { applyNewList } from "@/store/recentWordsSlice";
 
 export default function SearchScreen() {
   const [searchTerm, setSearchTerm] = useState("");
   const [clearSearch, setClearSearch] = useState(false);
-  const [recentWordList, setRecentWordList] = useState<any[]>([]);
+  const recentWordList = useSelector((state: any) => state.recentWords.words);
+  const dispatch = useDispatch();
   const [showRecentWords, setShowRecentWords] = useState(true);
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
@@ -56,8 +58,20 @@ export default function SearchScreen() {
         const recentWords = JSON.parse(recentWordStr);
 
         if (Array.isArray(recentWords)) {
-          setRecentWordList(recentWords);
+          dispatch(applyNewList(recentWords));
+        } else {
+          Toast.show({
+            type: "error",
+            text1: "Failed to show the recent searched words.",
+            position: "top",
+          });
         }
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Failed to fetch the recent searched words.",
+          position: "top",
+        });
       }
     } catch (error: any) {
       Toast.show({
@@ -71,7 +85,7 @@ export default function SearchScreen() {
   async function clearRecentWords() {
     try {
       await SecureStore.setItemAsync("recentWords", JSON.stringify([]));
-      setRecentWordList([]);
+      dispatch(applyNewList([]));
     } catch (error: any) {
       Toast.show({
         type: "error",
@@ -81,11 +95,9 @@ export default function SearchScreen() {
     }
   }
 
-  useFocusEffect(
-    useCallback(() => {
-      getRecentWords();
-    }, [])
-  );
+  useEffect(() => {
+    getRecentWords();
+  }, []);
 
   return (
     <SafeAreaView style={[styles.screenWrapper, { backgroundColor: Colors[theme].background }]}>

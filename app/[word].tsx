@@ -5,15 +5,18 @@ import Phonetic from "@/components/Phonetic";
 import Pronunciation from "@/components/Pronunciation";
 import { useTheme } from "@/components/ThemeContext";
 import { Colors } from "@/constants/Colors";
+import { addWord } from "@/store/recentWordsSlice";
 import { Stack, useLocalSearchParams } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch } from "react-redux";
 
 export default function WordDetail() {
   const { word }: { word: string } = useLocalSearchParams();
   const { theme } = useTheme();
+  const dispatch = useDispatch();
 
   async function saveWordEntry() {
     const recentWordStr = await SecureStore.getItemAsync("recentWords");
@@ -25,13 +28,19 @@ export default function WordDetail() {
         const filteredRecentWords = recentWords.filter((recentWord) => recentWord != word);
         filteredRecentWords.unshift(word);
         await SecureStore.setItemAsync("recentWords", JSON.stringify(filteredRecentWords));
+
+        dispatch(addWord(word));
       } else {
         const newRecentWords = [word];
         await SecureStore.setItemAsync("recentWords", JSON.stringify(newRecentWords));
+
+        dispatch(addWord(word));
       }
     } else {
       const newRecentWords = [word];
       await SecureStore.setItemAsync("recentWords", JSON.stringify(newRecentWords));
+
+      dispatch(addWord(word));
     }
   }
 

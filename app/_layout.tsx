@@ -1,3 +1,4 @@
+import { Provider } from "react-redux";
 import { ThemeProvider, useTheme } from "@/components/ThemeContext";
 import { Colors } from "@/constants/Colors";
 import { useFonts } from "expo-font";
@@ -6,6 +7,7 @@ import { StatusBar } from "expo-status-bar";
 import { Platform, StatusBar as RNStatusBar, SafeAreaView, useColorScheme } from "react-native";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
+import { store } from "../store";
 
 export default function RootLayout() {
   const { theme } = useTheme();
@@ -20,78 +22,80 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider>
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: Colors[theme].background,
-          paddingTop: Platform.OS === "android" ? RNStatusBar.currentHeight : 0,
-        }}
-      >
-        <StatusBar
-          style={scheme == "light" ? "dark" : "light"}
-          backgroundColor={scheme == "dark" ? "#000000" : "#ffffff"}
-        />
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false, title: "Back" }} />
-          <Stack.Screen
-            name="aboutUs"
-            options={{
-              title: "About Us",
-              headerTitle: "About Us",
-              headerStyle: {
-                backgroundColor: Colors.light.tint,
-              },
-              headerTintColor: "white",
-            }}
+    <Provider store={store}>
+      <ThemeProvider>
+        <SafeAreaView
+          style={{
+            flex: 1,
+            backgroundColor: Colors[theme].background,
+            paddingTop: Platform.OS === "android" ? RNStatusBar.currentHeight : 0,
+          }}
+        >
+          <StatusBar
+            style={scheme == "light" ? "dark" : "light"}
+            backgroundColor={scheme == "dark" ? "#000000" : "#ffffff"}
           />
-          <Stack.Screen
-            name="account"
-            options={{
-              title: "Profile",
-              headerTitle: "Profile",
-              headerStyle: {
-                backgroundColor: Colors.light.tint,
-              },
-              headerTintColor: "white",
-            }}
-          />
-          <Stack.Screen
-            name="login"
-            options={{
-              title: "Login",
-              headerTitle: "Login",
-              headerStyle: {
-                backgroundColor: Colors.light.tint,
-              },
-              headerTintColor: "white",
-            }}
-          />
-          <Stack.Screen
-            name="signup"
-            options={{
-              title: "Signup",
-              headerTitle: "Signup",
-              headerStyle: {
-                backgroundColor: Colors.light.tint,
-              },
-              headerTintColor: "white",
-            }}
-          />
-          <Stack.Screen
-            name="+not-found"
-            options={{
-              title: "Not found",
-              headerTitle: "Not found",
-              headerStyle: {
-                backgroundColor: Colors.light.tint,
-              },
-              headerTintColor: "white",
-            }}
-          />
-        </Stack>
-        <Toast />
-      </SafeAreaView>
-    </ThemeProvider>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false, title: "Back" }} />
+            <Stack.Screen
+              name="aboutUs"
+              options={{
+                title: "About Us",
+                headerTitle: "About Us",
+                headerStyle: {
+                  backgroundColor: Colors.light.tint,
+                },
+                headerTintColor: "white",
+              }}
+            />
+            <Stack.Screen
+              name="account"
+              options={{
+                title: "Profile",
+                headerTitle: "Profile",
+                headerStyle: {
+                  backgroundColor: Colors.light.tint,
+                },
+                headerTintColor: "white",
+              }}
+            />
+            <Stack.Screen
+              name="login"
+              options={{
+                title: "Login",
+                headerTitle: "Login",
+                headerStyle: {
+                  backgroundColor: Colors.light.tint,
+                },
+                headerTintColor: "white",
+              }}
+            />
+            <Stack.Screen
+              name="signup"
+              options={{
+                title: "Signup",
+                headerTitle: "Signup",
+                headerStyle: {
+                  backgroundColor: Colors.light.tint,
+                },
+                headerTintColor: "white",
+              }}
+            />
+            <Stack.Screen
+              name="+not-found"
+              options={{
+                title: "Not found",
+                headerTitle: "Not found",
+                headerStyle: {
+                  backgroundColor: Colors.light.tint,
+                },
+                headerTintColor: "white",
+              }}
+            />
+          </Stack>
+          <Toast />
+        </SafeAreaView>
+      </ThemeProvider>
+    </Provider>
   );
 }
