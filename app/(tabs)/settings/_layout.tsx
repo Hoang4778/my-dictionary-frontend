@@ -16,9 +16,7 @@ export default function SettingsLayout() {
               alignItems: "center",
             }}
           >
-            <Text style={{ color: "white", fontWeight: "bold", fontSize: 18 }}>
-              Settings
-            </Text>
+            <Text style={{ color: "white", fontWeight: "bold", fontSize: 18 }}>Settings</Text>
           </View>
         ),
       }}

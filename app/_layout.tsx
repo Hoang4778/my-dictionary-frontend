@@ -1,16 +1,15 @@
 import { Provider } from "react-redux";
-import { ThemeProvider, useTheme } from "@/components/ThemeContext";
+import { ThemeProvider } from "@/components/ThemeContext";
 import { Colors } from "@/constants/Colors";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { Platform, StatusBar as RNStatusBar, SafeAreaView, useColorScheme } from "react-native";
+import { StatusBar, useColorScheme } from "react-native";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 import { store } from "../store";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RootLayout() {
-  const { theme } = useTheme();
   const scheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
@@ -24,17 +23,11 @@ export default function RootLayout() {
   return (
     <Provider store={store}>
       <ThemeProvider>
-        <SafeAreaView
-          style={{
-            flex: 1,
-            backgroundColor: Colors[theme].background,
-            paddingTop: Platform.OS === "android" ? RNStatusBar.currentHeight : 0,
-          }}
-        >
-          <StatusBar
-            style={scheme == "light" ? "dark" : "light"}
-            backgroundColor={scheme == "dark" ? "#000000" : "#ffffff"}
-          />
+        <StatusBar
+          barStyle={scheme == "light" ? "dark-content" : "light-content"}
+          backgroundColor={scheme == "dark" ? "#000000" : "#ffffff"}
+        />
+        <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false, title: "Back" }} />
             <Stack.Screen
