@@ -93,7 +93,7 @@ export default function AccountScreen() {
       style={[styles.screenWrapper, { backgroundColor: Colors[theme].background }]}
       edges={["bottom"]}
     >
-      <View>
+      <View style={styles.infoItems}>
         <View style={styles.infoItem}>
           <Text style={[styles.textItem, { color: Colors[theme].text }]}>Account name:</Text>
           <Text style={{ color: Colors[theme].text }}>{accountInfo.data?.name}</Text>
@@ -131,8 +131,11 @@ const styles = StyleSheet.create({
     padding: 16,
     justifyContent: "space-between",
   },
+  infoItems: {
+    gap: 16,
+  },
   infoItem: {
-    paddingVertical: 16,
+    paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#cdcdcdff",
     flexDirection: "row",

@@ -180,6 +180,8 @@ export default function MarkFavorites({
       checkFavoriteWord();
     });
 
+    checkFavoriteWord();
+
     return () => listener.remove();
   }, []);
 
